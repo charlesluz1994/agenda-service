@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class PatientController {
 	private final PatientMapper mapper;
 
 	@PostMapping
-	public ResponseEntity<PatientResponse> save(@RequestBody PatientRequest request){
+	public ResponseEntity<PatientResponse> save(@Valid @RequestBody PatientRequest request){
 		Patient patient = mapper.toPatient(request);
 		Patient patientSaved = patientService.save(patient);
 		PatientResponse patientResponse = mapper.toPatientResponse(patientSaved);
@@ -44,7 +45,7 @@ public class PatientController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<PatientResponse> getPatientById(@PathVariable Long id){
+	public ResponseEntity<PatientResponse> getPatientById(@Valid @PathVariable Long id){
 		Optional<Patient> optPatient = patientService.findById(id);
 
 		if(optPatient.isEmpty()){
@@ -55,7 +56,7 @@ public class PatientController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<PatientResponse> updatePatientById(@PathVariable Long id,@RequestBody PatientRequest request){
+	public ResponseEntity<PatientResponse> updatePatientById(@Valid @PathVariable Long id,@RequestBody PatientRequest request){
 		Patient patient = mapper.toPatient(request);
 		Patient savedPatient = patientService.updatePatient(id, patient);
 		PatientResponse patientResponse = mapper.toPatientResponse(savedPatient);
