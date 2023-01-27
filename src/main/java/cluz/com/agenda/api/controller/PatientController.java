@@ -54,9 +54,10 @@ public class PatientController {
 		return ResponseEntity.status(HttpStatus.OK).body(mapper.toPatientResponse(optPatient.get()));
 	}
 
-	@PutMapping
-	public ResponseEntity<PatientResponse> updatePatientById(@RequestBody Patient patient){
-		Patient savedPatient = patientService.save(patient);
+	@PutMapping("/{id}")
+	public ResponseEntity<PatientResponse> updatePatientById(@PathVariable Long id,@RequestBody PatientRequest request){
+		Patient patient = mapper.toPatient(request);
+		Patient savedPatient = patientService.updatePatient(id, patient);
 		PatientResponse patientResponse = mapper.toPatientResponse(savedPatient);
 		return ResponseEntity.status(HttpStatus.OK).body(patientResponse);
 	}
