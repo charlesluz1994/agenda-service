@@ -5,7 +5,6 @@ import cluz.com.agenda.domain.repository.PatientRepository;
 import cluz.com.agenda.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -23,16 +22,16 @@ public class PatientService {
 
 		Optional<Patient> optPatient = repository.findByCpf(patient.getCpf());
 
-		if(optPatient.isPresent()){
-			if(!optPatient.get().getId().equals(patient.getId())){
+		if (optPatient.isPresent()) {
+			if (!optPatient.get().getId().equals(patient.getId())) {
 				existeCpf = true;
 			}
 		}
 
-		if(existeCpf){
+		if (existeCpf) {
 			throw new BusinessException("Cpf already exists.");
 		}
-		
+
 		return repository.save(patient);
 	}
 
@@ -48,9 +47,9 @@ public class PatientService {
 		return repository.findById(id);
 	}
 
-	public Patient updatePatient(Long id, Patient patient){
+	public Patient updatePatient(Long id, Patient patient) {
 		Optional<Patient> optPatient = this.findById(id);
-		if(optPatient.isEmpty()){
+		if (optPatient.isEmpty()) {
 			throw new BusinessException("Patient not registered!");
 		}
 		patient.setId(id);

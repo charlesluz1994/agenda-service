@@ -16,7 +16,7 @@ public class PatientMapper {
 
 	private final ModelMapper mapper;
 
-	public Patient toPatient(PatientRequest patientRequest){
+	public Patient toPatient(PatientRequest patientRequest) {
 		return mapper.map(patientRequest, Patient.class);
 	}
 
@@ -24,7 +24,7 @@ public class PatientMapper {
 		return mapper.map(patient, PatientResponse.class);
 	}
 
-	public List<PatientResponse> toPatientResponseList(List<Patient> patients){
+	public List<PatientResponse> toPatientResponseList(List<Patient> patients) {
 		return patients.stream()
 				.map(this::toPatientResponse)
 				.collect(Collectors.toList());

@@ -30,7 +30,7 @@ public class PatientController {
 	private final PatientMapper mapper;
 
 	@PostMapping
-	public ResponseEntity<PatientResponse> save(@Valid @RequestBody PatientRequest request){
+	public ResponseEntity<PatientResponse> save(@Valid @RequestBody PatientRequest request) {
 		Patient patient = mapper.toPatient(request);
 		Patient patientSaved = patientService.save(patient);
 		PatientResponse patientResponse = mapper.toPatientResponse(patientSaved);
@@ -38,17 +38,17 @@ public class PatientController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<PatientResponse>> findAll(){
+	public ResponseEntity<List<PatientResponse>> findAll() {
 		List<Patient> patientList = patientService.findAll();
 		List<PatientResponse> patientResponses = mapper.toPatientResponseList(patientList);
 		return ResponseEntity.status(HttpStatus.OK).body(patientResponses);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<PatientResponse> getPatientById(@Valid @PathVariable Long id){
+	public ResponseEntity<PatientResponse> getPatientById(@Valid @PathVariable Long id) {
 		Optional<Patient> optPatient = patientService.findById(id);
 
-		if(optPatient.isEmpty()){
+		if (optPatient.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 
@@ -56,7 +56,7 @@ public class PatientController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<PatientResponse> updatePatientById(@Valid @PathVariable Long id,@RequestBody PatientRequest request){
+	public ResponseEntity<PatientResponse> updatePatientById(@Valid @PathVariable Long id, @RequestBody PatientRequest request) {
 		Patient patient = mapper.toPatient(request);
 		Patient savedPatient = patientService.updatePatient(id, patient);
 		PatientResponse patientResponse = mapper.toPatientResponse(savedPatient);
@@ -64,7 +64,7 @@ public class PatientController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletePatient(@PathVariable Long id){
+	public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
 		patientService.delete(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
