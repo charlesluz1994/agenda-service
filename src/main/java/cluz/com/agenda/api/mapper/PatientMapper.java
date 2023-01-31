@@ -29,39 +29,4 @@ public class PatientMapper {
 				.map(this::toPatientResponse)
 				.collect(Collectors.toList());
 	}
-
-//	public static List<PatientResponse> toPatientResponseList(List<Patient> patients){
-//		List<PatientResponse> responses = new ArrayList<>();
-//		for(Patient patient:patients){
-//			responses.add(toPatientResponse(patient));
-//		}
-//		return responses;
-//	}
-
-//	public static Patient toPatient(PatientRequest patientRequest) {
-//		Patient patient = new Patient();
-//		patient.setNome(patientRequest.getNome());
-//		patient.setSobrenome(patientRequest.getSobrenome());
-//		patient.setCpf(patientRequest.getCpf());
-//		patient.setEmail(patientRequest.getEmail());
-//		return patient;
-//	}
-
-//	public static PatientResponse toPatientResponse(Patient patient) {
-//		PatientResponse patientResponse = new PatientResponse();
-//		patientResponse.setId(patient.getId());
-//		patientResponse.setNome(patient.getNome());
-//		patientResponse.setSobrenome(patient.getSobrenome());
-//		patientResponse.setCpf(patient.getCpf());
-//		patientResponse.setEmail(patient.getEmail());
-//		return patientResponse;
-//	}
-
-//	public static List<PatientResponse> toPatientResponseList(List<Patient> patients){
-//		List<PatientResponse> responses = new ArrayList<>();
-//		for(Patient patient:patients){
-//			responses.add(toPatientResponse(patient));
-//		}
-//		return responses;
-//	}
 }
