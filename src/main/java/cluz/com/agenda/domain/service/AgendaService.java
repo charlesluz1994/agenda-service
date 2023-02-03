@@ -17,23 +17,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AgendaService {
 	private final AgendaRepository repository;
-	private final PatientService pacientService;
+	private final PatientService patientService;
 
 	public Agenda save(Agenda agenda) {
-		Optional<Patient> optPatient = pacientService.findById(agenda.getPaciente().getId());
+		Optional<Patient> optPatient = patientService.findById(agenda.getPatient().getId());
 
 		if (optPatient.isEmpty()) {
 			new BusinessException("Patient not found!");
 		}
 
-		Optional<Agenda> optTime = repository.findByHorario(agenda.getHorario());
+		Optional<Agenda> optTime = repository.findByAppointmentTime(agenda.getAppointmentTime());
 
 		if (optTime.isPresent()) {
 			new BusinessException("Time already scheduled!");
 		}
 
-		agenda.setPaciente(optPatient.get());
-		agenda.setDataCriacao(LocalDateTime.now());
+		agenda.setPatient(optPatient.get());
+		agenda.setCreatedDate(LocalDateTime.now());
 
 		return repository.save(agenda);
 	}
@@ -46,7 +46,7 @@ public class AgendaService {
 		return repository.findById(id);
 	}
 
-	public void delete(Agenda agenda) {
-		repository.delete(agenda);
+	public void delete(Long id) {
+		repository.deleteById(id);
 	}
 }

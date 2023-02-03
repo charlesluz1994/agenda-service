@@ -5,14 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PatientResponse {
+public class AgendaResponse {
 	private Long id;
-	private String nome;
-	private String sobrenome;
-	private String cpf;
-	private String email;
+	private String description;
+	private LocalDateTime appointment_time;
+	private PatientResponse patient;
 }

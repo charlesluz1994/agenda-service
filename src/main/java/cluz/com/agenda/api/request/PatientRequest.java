@@ -15,10 +15,10 @@ import javax.validation.constraints.NotBlank;
 public class PatientRequest {
 
 	@NotBlank(message = "Patient name is required")
-	private String nome;
+	private String name;
 
 	@NotBlank(message = "Patient last name is required")
-	private String sobrenome;
+	private String lastname;
 
 	@NotBlank(message = "Patient cpf is required")
 	private String cpf;

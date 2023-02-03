@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PatientResponse {
 	private Long id;
-	private String nome;
-	private String sobrenome;
+	private String name;
+	private String lastname;
 	private String cpf;
 	private String email;
 }

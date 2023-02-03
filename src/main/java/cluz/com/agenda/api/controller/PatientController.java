@@ -6,6 +6,7 @@ import cluz.com.agenda.api.response.PatientResponse;
 import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.service.PatientService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,16 +23,16 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("patient")
-@AllArgsConstructor
+@RequestMapping("/patient")
+@RequiredArgsConstructor
 public class PatientController {
 
 	private final PatientService patientService;
 	private final PatientMapper mapper;
 
 	@PostMapping
-	public ResponseEntity<PatientResponse> save(@Valid @RequestBody PatientRequest request) {
-		Patient patient = mapper.toPatient(request);
+	public ResponseEntity<PatientResponse> save(@Valid @RequestBody PatientRequest patientRequest) {
+		Patient patient = mapper.toPatient(patientRequest);
 		Patient patientSaved = patientService.save(patient);
 		PatientResponse patientResponse = mapper.toPatientResponse(patientSaved);
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientResponse);
@@ -56,8 +57,8 @@ public class PatientController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<PatientResponse> updatePatientById(@Valid @PathVariable Long id, @RequestBody PatientRequest request) {
-		Patient patient = mapper.toPatient(request);
+	public ResponseEntity<PatientResponse> updatePatientById(@Valid @PathVariable Long id, @RequestBody PatientRequest patientRequest) {
+		Patient patient = mapper.toPatient(patientRequest);
 		Patient savedPatient = patientService.updatePatient(id, patient);
 		PatientResponse patientResponse = mapper.toPatientResponse(savedPatient);
 		return ResponseEntity.status(HttpStatus.OK).body(patientResponse);

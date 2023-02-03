@@ -1,8 +1,8 @@
 package cluz.com.agenda.api.mapper;
 
-import cluz.com.agenda.api.request.PatientRequest;
-import cluz.com.agenda.api.response.PatientResponse;
-import cluz.com.agenda.domain.entity.Patient;
+import cluz.com.agenda.api.request.AgendaRequest;
+import cluz.com.agenda.api.response.AgendaResponse;
+import cluz.com.agenda.domain.entity.Agenda;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -12,21 +12,21 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class PatientMapper {
+public class AgendaMapper {
 
 	private final ModelMapper mapper;
 
-	public Patient toPatient(PatientRequest patientRequest) {
-		return mapper.map(patientRequest, Patient.class);
+	public Agenda toAgenda(AgendaRequest agendaRequest) {
+		return mapper.map(agendaRequest, Agenda.class);
 	}
 
-	public PatientResponse toPatientResponse(Patient patient) {
-		return mapper.map(patient, PatientResponse.class);
+	public AgendaResponse toAgendaResponse(Agenda agenda) {
+		return mapper.map(agenda, AgendaResponse.class);
 	}
 
-	public List<PatientResponse> toPatientResponseList(List<Patient> patients) {
-		return patients.stream()
-				.map(this::toPatientResponse)
+	public List<AgendaResponse> toAgendaResponseList(List<Agenda> agendas) {
+		return agendas.stream()
+				.map(this::toAgendaResponse)
 				.collect(Collectors.toList());
 	}
 }

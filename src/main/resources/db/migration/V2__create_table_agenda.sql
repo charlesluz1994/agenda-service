@@ -1,8 +1,8 @@
 CREATE TABLE agenda(
 id serial PRIMARY KEY,
-descricao varchar (255),
-data_hora timestamp,
-data_criacao timestamp,
-paciente_id integer,
-CONSTRAINT fk_agenda_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id)
+description varchar (255),
+appointment_time timestamp,
+created_date timestamp,
+patient_id integer,
+CONSTRAINT fk_agenda_patient FOREIGN KEY (patient_id) REFERENCES patient(id)
 );

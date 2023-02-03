@@ -1,5 +1,9 @@
 package cluz.com.agenda.domain.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,19 +24,22 @@ public class Agenda {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", updatable = false, nullable = false)
 	private Long id;
 
-	@Column(name = "descricao")
-	private String descricao;
+	@Column(name = "description")
+	private String description;
 
-	@Column(name = "data_hora")
-	private LocalDateTime horario;
+	@Column(name = "appointment_time")
+	private LocalDateTime appointmentTime;
 
-	@Column(name = "data_criacao")
-	private LocalDateTime dataCriacao;
+	@Column(name = "created_date", updatable = false)
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	private LocalDateTime createdDate;
 
 	@ManyToOne
-	private Patient paciente;
+	private Patient patient;
 
 
 }
