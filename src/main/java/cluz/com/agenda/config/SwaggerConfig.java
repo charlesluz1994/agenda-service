@@ -26,7 +26,7 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Spring boot REST API")
+                .title("Spring Boot REST API")
                 .description("Application for Schedule Appointments")
                 .version("1.0.0")
                 .contact(new Contact("Charles Luz", "https://github.com/charlesluz1994/agenda-service", "charlesluz.pt@gmail.com"))
