@@ -17,14 +17,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AgendaRequest {
 
-	@NotBlank(message = "Description is required")
-	private String description;
+    @NotBlank(message = "Description is required")
+    private String description;
 
-	@NotNull(message = "Appointment time is required.")
-	@Future(message = "Time cannot be less than now.")
-	@DateTimeFormat(pattern="yyyy-MM-ddTHH:mm:ss")
-	private LocalDateTime appointment_time;
+    @NotNull(message = "Appointment time is required.")
+    @Future(message = "Time cannot be less than now.")
+    @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
+    private LocalDateTime appointment_time;
 
-	@NotNull(message = "Patient is required")
-	private Long patientId;
+    @NotNull(message = "Patient is required")
+    private Long patientId;
 }

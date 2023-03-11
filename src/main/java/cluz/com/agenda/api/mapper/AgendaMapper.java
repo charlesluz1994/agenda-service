@@ -14,19 +14,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AgendaMapper {
 
-	private final ModelMapper mapper;
+    private final ModelMapper mapper;
 
-	public Agenda toAgenda(AgendaRequest agendaRequest) {
-		return mapper.map(agendaRequest, Agenda.class);
-	}
+    public Agenda toAgenda(AgendaRequest agendaRequest) {
+        return mapper.map(agendaRequest, Agenda.class);
+    }
 
-	public AgendaResponse toAgendaResponse(Agenda agenda) {
-		return mapper.map(agenda, AgendaResponse.class);
-	}
+    public AgendaResponse toAgendaResponse(Agenda agenda) {
+        return mapper.map(agenda, AgendaResponse.class);
+    }
 
-	public List<AgendaResponse> toAgendaResponseList(List<Agenda> agendas) {
-		return agendas.stream()
-				.map(this::toAgendaResponse)
-				.collect(Collectors.toList());
-	}
+    public List<AgendaResponse> toAgendaResponseList(List<Agenda> agendas) {
+        return agendas.stream()
+                .map(this::toAgendaResponse)
+                .collect(Collectors.toList());
+    }
 }

@@ -14,19 +14,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PatientMapper {
 
-	private final ModelMapper mapper;
+    private final ModelMapper mapper;
 
-	public Patient toPatient(PatientRequest patientRequest) {
-		return mapper.map(patientRequest, Patient.class);
-	}
+    public Patient toPatient(PatientRequest patientRequest) {
+        return mapper.map(patientRequest, Patient.class);
+    }
 
-	public PatientResponse toPatientResponse(Patient patient) {
-		return mapper.map(patient, PatientResponse.class);
-	}
+    public PatientResponse toPatientResponse(Patient patient) {
+        return mapper.map(patient, PatientResponse.class);
+    }
 
-	public List<PatientResponse> toPatientResponseList(List<Patient> patients) {
-		return patients.stream()
-				.map(this::toPatientResponse)
-				.collect(Collectors.toList());
-	}
+    public List<PatientResponse> toPatientResponseList(List<Patient> patients) {
+        return patients.stream()
+                .map(this::toPatientResponse)
+                .collect(Collectors.toList());
+    }
 }

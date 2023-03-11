@@ -16,37 +16,37 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class AgendaService {
-	private final AgendaRepository repository;
-	private final PatientService patientService;
+    private final AgendaRepository repository;
+    private final PatientService patientService;
 
-	public Agenda save(Agenda agenda) {
-		Optional<Patient> optPatient = patientService.findById(agenda.getPatient().getId());
+    public Agenda save(Agenda agenda) {
+        Optional<Patient> optPatient = patientService.findById(agenda.getPatient().getId());
 
-		if (optPatient.isEmpty()) {
-			new BusinessException("Patient not found!");
-		}
+        if (optPatient.isEmpty()) {
+            new BusinessException("Patient not found!");
+        }
 
-		Optional<Agenda> optTime = repository.findByAppointmentTime(agenda.getAppointmentTime());
+        Optional<Agenda> optTime = repository.findByAppointmentTime(agenda.getAppointmentTime());
 
-		if (optTime.isPresent()) {
-			new BusinessException("Time already scheduled!");
-		}
+        if (optTime.isPresent()) {
+            new BusinessException("Time already scheduled!");
+        }
 
-		agenda.setPatient(optPatient.get());
-		agenda.setCreatedDate(LocalDateTime.now());
+        agenda.setPatient(optPatient.get());
+        agenda.setCreatedDate(LocalDateTime.now());
 
-		return repository.save(agenda);
-	}
+        return repository.save(agenda);
+    }
 
-	public List<Agenda> findAll() {
-		return repository.findAll();
-	}
+    public List<Agenda> findAll() {
+        return repository.findAll();
+    }
 
-	public Optional<Agenda> findById(Long id) {
-		return repository.findById(id);
-	}
+    public Optional<Agenda> findById(Long id) {
+        return repository.findById(id);
+    }
 
-	public void delete(Long id) {
-		repository.deleteById(id);
-	}
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 }

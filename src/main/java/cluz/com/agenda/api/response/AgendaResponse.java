@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AgendaResponse {
-	private Long id;
-	private String description;
-	private LocalDateTime appointment_time;
-	private PatientResponse patient;
+    private Long id;
+    private String description;
+    private LocalDateTime appointment_time;
+    private PatientResponse patient;
 }

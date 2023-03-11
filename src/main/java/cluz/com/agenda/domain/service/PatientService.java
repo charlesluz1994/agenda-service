@@ -13,46 +13,46 @@ import java.util.Optional;
 @Service
 @Transactional
 public class PatientService {
-	@Autowired
-	private PatientRepository repository;
+    @Autowired
+    private PatientRepository repository;
 
-	public Patient save(Patient patient) {
+    public Patient save(Patient patient) {
 
-		boolean existeCpf = false;
+        boolean existeCpf = false;
 
-		Optional<Patient> optPatient = repository.findByCpf(patient.getCpf());
+        Optional<Patient> optPatient = repository.findByCpf(patient.getCpf());
 
-		if (optPatient.isPresent()) {
-			if (!optPatient.get().getId().equals(patient.getId())) {
-				existeCpf = true;
-			}
-		}
+        if (optPatient.isPresent()) {
+            if (!optPatient.get().getId().equals(patient.getId())) {
+                existeCpf = true;
+            }
+        }
 
-		if (existeCpf) {
-			throw new BusinessException("Cpf already exists.");
-		}
+        if (existeCpf) {
+            throw new BusinessException("Cpf already exists.");
+        }
 
-		return repository.save(patient);
-	}
+        return repository.save(patient);
+    }
 
-	public List<Patient> findAll() {
-		return repository.findAll();
-	}
+    public List<Patient> findAll() {
+        return repository.findAll();
+    }
 
-	public void delete(Long id) {
-		repository.deleteById(id);
-	}
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 
-	public Optional<Patient> findById(Long id) {
-		return repository.findById(id);
-	}
+    public Optional<Patient> findById(Long id) {
+        return repository.findById(id);
+    }
 
-	public Patient updatePatient(Long id, Patient patient) {
-		Optional<Patient> optPatient = this.findById(id);
-		if (optPatient.isEmpty()) {
-			throw new BusinessException("Patient not registered!");
-		}
-		patient.setId(id);
-		return save(patient);
-	}
+    public Patient updatePatient(Long id, Patient patient) {
+        Optional<Patient> optPatient = this.findById(id);
+        if (optPatient.isEmpty()) {
+            throw new BusinessException("Patient not registered!");
+        }
+        patient.setId(id);
+        return save(patient);
+    }
 }
