@@ -1,5 +1,6 @@
 package cluz.com.agenda.domain.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "patient")
+@Builder
 public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +20,5 @@ public class Patient {
     private String lastname;
     private String cpf;
     private String email;
+
 }

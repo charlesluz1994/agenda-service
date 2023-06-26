@@ -20,16 +20,16 @@ public class AgendaService {
     private final PatientService patientService;
 
     public Agenda save(Agenda agenda) {
-        Optional<Patient> optPatient = patientService.findById(agenda.getPatient().getId());
-
-        if (optPatient.isEmpty()) {
-            new BusinessException("Patient not found!");
+        if (agenda.getPatient() == null) {
+            throw new BusinessException("Patient not found!");
         }
+
+        Optional<Patient> optPatient = patientService.findById(agenda.getPatient().getId());
 
         Optional<Agenda> optTime = repository.findByAppointmentTime(agenda.getAppointmentTime());
 
         if (optTime.isPresent()) {
-            new BusinessException("Time already scheduled!");
+            throw new BusinessException("Time already scheduled!");
         }
 
         agenda.setPatient(optPatient.get());
