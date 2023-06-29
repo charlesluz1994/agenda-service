@@ -68,7 +68,7 @@ class AgendaServiceTest {
                 .appointmentTime(LocalDateTime.now())
                 .createdDate(LocalDateTime.now()).build();
 
-        //when(patientService.findById(ArgumentMatchers.any())).thenReturn(Optional.empty());
+        // when(patientService.findById(ArgumentMatchers.any())).thenReturn(Optional.empty());
 
         // When
         // Then
