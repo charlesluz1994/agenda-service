@@ -8,7 +8,11 @@ The application uses a PostgreSQL database hosted on Azure.
 Integrated tests are being executed with an H2 database, and unit tests with JUnit + Mockito.
 There are 2 Postman collections - 1 for the Azure endpoint and one for the Local endpoint.
 
+# Swagger endpoint Local
+http://localhost:8085/swagger-ui/#/agenda-controller
 
+# Swagger endpoint Azure
+https://agendaservice.azurewebsites.net/swagger-ui/#/agenda-controller
 
 ## Technologies
 Java 11
@@ -37,15 +41,6 @@ MockMVC - Integration Tests
 - Use Records as DTO
 - Caching
 - Pagination
-
-# Swagger endpoint Local
-http://localhost:8085/swagger-ui/#/agenda-controller
-
-# Swagger endpoint Azure
-https://agendaservice.azurewebsites.net/swagger-ui/#/agenda-controller
-
-
-
 
 ## Controllers
 The application has two main controllers:
