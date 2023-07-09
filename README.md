@@ -1,12 +1,17 @@
-# agenda-service - Appointment Scheduling Application
+# Appointment Scheduling Application
 
 ![Java Build](https://github.com/charlesluz1994/agenda-service/actions/workflows/main_agendaservice.yml/badge.svg?branch=main)
 
 This is a Java RESTful application for appointment scheduling. 
 The application is hosted on an Azure service (Azure App Service) and uses a PostgreSQL database hosted on Azure. 
-The application uses a PostgreSQL database hosted on Azure. 
 Integrated tests are being executed with an H2 database, and unit tests with JUnit + Mockito.
-There are 2 Postman collections - 1 for the Azure endpoint and one for the Local endpoint.
+There are 2 Postman collections provided in the root: 1 for the Azure endpoint and one for the Local tests.
+
+By default, the application use the dev profile.
+
+For local tests:
+Run the application with the local profile in IntelliJ.
+To use 'local', in your run configuration, add the environment variable: spring.profiles.active=local
 
 # Swagger endpoint Local
 http://localhost:8085/swagger-ui/#/agenda-controller
@@ -14,7 +19,7 @@ http://localhost:8085/swagger-ui/#/agenda-controller
 # Swagger endpoint Azure
 https://agendaservice.azurewebsites.net/swagger-ui/#/agenda-controller
 
-## Technologies
+### Technologies
 Java 11
 Maven
 JPA + Hibernate
@@ -22,7 +27,7 @@ PostgreSQL
 JUnit 5 + Mockito - Unit tests
 MockMVC - Integration Tests
 
-## Some functionalities available in the API
+### Some functionalities available in the API
 - ✅ Java model class with validation
 - ✅ JPA repository
 - ✅ PostgreSQL database
@@ -35,7 +40,7 @@ MockMVC - Integration Tests
 - ✅ Flyway
 - ✅ Deployed to Azure Cloud
 
-## Some functionalities to be implemented
+### Some functionalities to be implemented
 - Upgrate to Java 17
 - Improve Test coverage
 - Use Records as DTO
