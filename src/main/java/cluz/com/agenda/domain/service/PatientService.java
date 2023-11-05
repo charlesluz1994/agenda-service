@@ -4,6 +4,7 @@ import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.PatientRepository;
 import cluz.com.agenda.exception.BusinessException;
 import cluz.com.agenda.exception.DataIntegrityViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,9 @@ import java.util.Optional;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class PatientService {
-    @Autowired
-    private PatientRepository repository;
+    private final PatientRepository repository;
 
     public Patient save(Patient patient) {
 
