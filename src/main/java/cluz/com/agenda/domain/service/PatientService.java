@@ -3,6 +3,8 @@ package cluz.com.agenda.domain.service;
 import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.PatientRepository;
 import cluz.com.agenda.exception.BusinessException;
+import cluz.com.agenda.exception.DataIntegrityViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,26 +14,16 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@Slf4j
 public class PatientService {
     @Autowired
     private PatientRepository repository;
 
     public Patient save(Patient patient) {
 
-        boolean existeCpf = false;
-
-        Optional<Patient> optPatient = repository.findByCpf(patient.getCpf());
-
-        if (optPatient.isPresent()) {
-            if (!optPatient.get().getId().equals(patient.getId())) {
-                existeCpf = true;
-            }
+        if (isCPFAlreadyRegistered(patient)) {
+            throw new DataIntegrityViolationException("Cpf already exists in the database");
         }
-
-        if (existeCpf) {
-            throw new BusinessException("Cpf already exists.");
-        }
-
         return repository.save(patient);
     }
 
@@ -41,9 +33,16 @@ public class PatientService {
 
     public void delete(Long id) {
         repository.deleteById(id);
+        log.info("Performing search of patient by id: {}", id);
     }
 
     public Optional<Patient> findById(Long id) {
+        Optional<Patient> optPatient = repository.findById(id);
+
+        if (optPatient.isEmpty()) {
+            throw new BusinessException("Patient not registered!");
+        }
+
         return repository.findById(id);
     }
 
@@ -54,5 +53,11 @@ public class PatientService {
         }
         patient.setId(id);
         return save(patient);
+    }
+
+    private boolean isCPFAlreadyRegistered(Patient objPatient) {
+        Optional<Patient> optionalPatient = repository.findByCpf(objPatient.getCpf());
+
+        return optionalPatient.isPresent();
     }
 }

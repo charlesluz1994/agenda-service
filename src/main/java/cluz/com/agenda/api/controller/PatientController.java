@@ -41,12 +41,7 @@ public class PatientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PatientResponse> getPatientById(@Valid @PathVariable Long id) {
-        log.info("Performing search of patient by id: {}", id);
         Optional<Patient> optPatient = patientService.findById(id);
-
-        if (optPatient.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
 
         return ResponseEntity.status(HttpStatus.OK).body(mapper.toPatientResponse(optPatient.get()));
     }

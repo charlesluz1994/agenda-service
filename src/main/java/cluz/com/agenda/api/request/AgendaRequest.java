@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AgendaRequest {
 
+    @NotNull
     @NotBlank(message = "Description is required")
     private String description;
 

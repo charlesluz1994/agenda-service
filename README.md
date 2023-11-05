@@ -95,3 +95,5 @@ Endpoint: `DELETE /patient/{id}`
 This endpoint deletes a patient based on the provided ID.
 
 
+If you need a CPF generator, you can use this website:
+https://www.4devs.com.br/gerador_de_cpf
