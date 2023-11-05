@@ -22,8 +22,8 @@ public class AgendaRequest {
 
     @NotNull(message = "Appointment time is required.")
     @Future(message = "Time cannot be less than now.")
-    @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
-    private LocalDateTime appointment_time;
+    @DateTimeFormat(pattern = "yyyy-MM-ddTHH:mm")
+    private LocalDateTime appointmentTime;
 
     @NotNull(message = "Patient is required")
     private Long patientId;

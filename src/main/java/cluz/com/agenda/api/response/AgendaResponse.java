@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 public class AgendaResponse {
     private Long id;
     private String description;
-    private LocalDateTime appointment_time;
+    private LocalDateTime appointmentTime;
     private PatientResponse patient;
 }

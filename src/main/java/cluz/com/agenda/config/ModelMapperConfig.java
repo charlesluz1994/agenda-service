@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ModelMapperConfig {
-    //Always that be necessary use ModelMapper, Spring will provide the injection dependence automatically.
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
