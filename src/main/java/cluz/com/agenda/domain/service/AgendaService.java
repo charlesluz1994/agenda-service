@@ -43,10 +43,20 @@ public class AgendaService {
     }
 
     public Optional<Agenda> findById(Long id) {
-        return repository.findById(id);
+        var optAgenda = repository.findById(id);
+
+        if (optAgenda.isEmpty()) {
+            throw new BusinessException("Agenda not found!");
+        }
+        return optAgenda;
     }
 
     public void delete(Long id) {
+        var optAgenda = repository.findById(id);
+
+        if (optAgenda.isEmpty()) {
+            throw new BusinessException("Agenda not found!");
+        }
         repository.deleteById(id);
     }
 }

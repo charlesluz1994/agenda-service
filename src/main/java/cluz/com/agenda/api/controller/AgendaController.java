@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -23,8 +23,8 @@ public class AgendaController {
 
     @PostMapping
     public ResponseEntity<AgendaResponse> save(@Valid @RequestBody AgendaRequest agendaRequest) {
-        Agenda agenda = mapper.toAgenda(agendaRequest);
-        Agenda savedAgenda = agendaService.save(agenda);
+        var agenda = mapper.toAgenda(agendaRequest);
+        var savedAgenda = agendaService.save(agenda);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toAgendaResponse(savedAgenda));
     }
 
@@ -37,12 +37,7 @@ public class AgendaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AgendaResponse> getAgendaById(@Valid @PathVariable Long id) {
-        Optional<Agenda> optAgenda = agendaService.findById(id);
-
-        if (optAgenda.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
+        var optAgenda = agendaService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(mapper.toAgendaResponse(optAgenda.get()));
     }
 
@@ -51,5 +46,7 @@ public class AgendaController {
         agendaService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    //TODO: Update agenda.
 
 }
