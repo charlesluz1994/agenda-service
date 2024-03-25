@@ -54,6 +54,16 @@ public class AgendaControllerAdvice extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST.value()).build());
     }
 
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Error> BusinessException(Exception ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Error.builder()
+                .message(ex.getMessage())
+                .source("")
+                .reason(ErrorConstants.INVALID_ARGUMENT_REASON_CODE)
+                .status(HttpStatus.NOT_FOUND.value()).build());
+    }
+
     @ExceptionHandler(ApiException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ApiResponse(responseCode = "400", description = "Client error", content = @Content(schema = @Schema(implementation = Error.class, example = "{\n  \"message\": \"CPF validation message\",\n  \"reason\": \"The request contains an empty value for CPF\",\n  \"status\": 404\n}")))

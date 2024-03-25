@@ -49,7 +49,7 @@ public class PatientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PatientResponse> getPatientById(@Valid @PathVariable Long id) {
-        Optional<Patient> optPatient = patientService.findById(id);
+        var optPatient = patientService.findById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(mapper.toPatientResponse(optPatient.get()));
     }
