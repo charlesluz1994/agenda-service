@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.br.CPF;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -15,23 +14,20 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class PatientRequest {
 
-    @NotNull
-    @NotEmpty
-    @NotBlank(message = "Patient name is required")
+    @NotEmpty(message = "name cannot be empty")
+    @NotBlank(message = "Patient name cannot be blank")
     private String name;
 
-    @NotNull
-    @NotEmpty
-    @NotBlank(message = "Patient last name is required")
+    @NotEmpty(message = "name cannot be empty")
+    @NotBlank(message = "Patient last name cannot be blank")
     private String lastname;
 
-    @NotNull
-    @NotEmpty
+    @NotEmpty(message = "name cannot be empty")
     @NotBlank(message = "Patient cpf is required")
     @CPF(message = "CPF is not following the right pattern. ie: 93922590821")
     private String cpf;
 
-    @NotBlank(message = "Patient email is required")
+    @NotBlank(message = "Patient email cannot be blank")
     @Email
     private String email;
 }

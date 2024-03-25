@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>cluz.com</groupId>
 	<artifactId>agenda</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>agenda</name>
 	<description>Project for scheduling patients.</description>
 	<properties>

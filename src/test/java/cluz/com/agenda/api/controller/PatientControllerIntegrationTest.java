@@ -3,7 +3,6 @@ package cluz.com.agenda.api.controller;
 import cluz.com.agenda.api.request.PatientRequest;
 import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.PatientRepository;
-import cluz.com.agenda.exception.BusinessException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.nio.charset.StandardCharsets;
 
@@ -36,11 +36,13 @@ class PatientControllerIntegrationTest {
 
     @BeforeEach
     void setup() {
-        Patient patient = new Patient();
-        patient.setName("Charles");
-        patient.setLastname("Luz");
-        patient.setCpf("00100200388");
-        patient.setEmail("charles@gmail.com");
+        var patient = Patient.builder()
+                .name("Charles")
+                .lastname("Luz")
+                .cpf("00100200388")
+                .email("charles@gmail.com")
+                .build();
+
         repository.save(patient);
     }
 
@@ -50,12 +52,12 @@ class PatientControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Given a patient when save patient then return a 200 status code")
-    void given_Patient_when_SavePatient_then_Return201StatusCode() throws Exception {
+    @DisplayName("Given a patient when save patient then return a 201 status code")
+    void given_Patient_when_SavePatient_then_Return201() throws Exception {
         PatientRequest patient = PatientRequest.builder()
-                .name("Charles")
+                .name("Carlos")
                 .lastname("Luz")
-                .cpf("00100200300")
+                .cpf("93922590853")
                 .email("charles@gmail.com").build();
 
         mockMvc.perform(post("/patient")
@@ -68,7 +70,7 @@ class PatientControllerIntegrationTest {
 
     @Test
     @DisplayName("given a request when find all patients then return 200 status code")
-    void given_ID_when_FindAllPatients_then_Return200StatusCode() throws Exception {
+    void given_ID_when_FindAllPatients_then_Return200() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/patient"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(print());
@@ -76,7 +78,7 @@ class PatientControllerIntegrationTest {
 
     @Test
     @DisplayName("Given an ID when find patient ByID then return a 200 status code")
-    void given_ID_when_FindPatientByID_then_Return200StatusCode() throws Exception {
+    void given_ID_when_FindPatientByID_then_Return200() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/patient/1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(print());
@@ -121,8 +123,8 @@ class PatientControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(objectMapper.writeValueAsString(patient)))
-                .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity())
-                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof BusinessException))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException))
                 .andDo(print());
     }
 }

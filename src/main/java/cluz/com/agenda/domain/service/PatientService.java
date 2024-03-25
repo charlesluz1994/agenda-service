@@ -6,7 +6,6 @@ import cluz.com.agenda.exception.BusinessException;
 import cluz.com.agenda.exception.DataIntegrityViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -38,7 +37,7 @@ public class PatientService {
     }
 
     public Optional<Patient> findById(Long id) {
-        Optional<Patient> optPatient = repository.findById(id);
+        var optPatient = repository.findById(id);
 
         if (optPatient.isEmpty()) {
             throw new BusinessException("Patient not registered!");
@@ -48,7 +47,7 @@ public class PatientService {
     }
 
     public Patient updatePatient(Long id, Patient patient) {
-        Optional<Patient> optPatient = this.findById(id);
+        var optPatient = this.findById(id);
         if (optPatient.isEmpty()) {
             throw new BusinessException("Patient not registered!");
         }
@@ -57,8 +56,7 @@ public class PatientService {
     }
 
     private boolean isCPFAlreadyRegistered(Patient objPatient) {
-        Optional<Patient> optionalPatient = repository.findByCpf(objPatient.getCpf());
-
+        var optionalPatient = repository.findByCpf(objPatient.getCpf());
         return optionalPatient.isPresent();
     }
 }
