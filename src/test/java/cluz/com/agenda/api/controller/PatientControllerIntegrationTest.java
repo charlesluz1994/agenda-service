@@ -48,7 +48,7 @@ class PatientControllerIntegrationTest {
 
     @AfterEach
     void down() {
-        repository.deleteAll();
+        repository.deleteAllInBatch();
     }
 
     @Test
