@@ -6,6 +6,8 @@ import cluz.com.agenda.exception.BusinessException;
 import cluz.com.agenda.exception.DataIntegrityViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,14 +23,18 @@ public class PatientService {
 
     public Patient save(Patient patient) {
 
+        if (patient.getId() != null) {
+            throw new IllegalArgumentException("ID must be null for new entities.");
+        }
+
         if (isCPFAlreadyRegistered(patient)) {
             throw new DataIntegrityViolationException("Cpf already exists in the database");
         }
         return repository.save(patient);
     }
 
-    public List<Patient> findAll() {
-        return repository.findAll();
+    public Page<Patient> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     public void delete(Long id) {

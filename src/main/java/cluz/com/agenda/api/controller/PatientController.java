@@ -3,10 +3,10 @@ package cluz.com.agenda.api.controller;
 import cluz.com.agenda.api.mapper.PatientMapper;
 import cluz.com.agenda.api.request.PatientRequest;
 import cluz.com.agenda.api.response.PatientResponse;
-import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +38,8 @@ public class PatientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PatientResponse>> findAll() {
-        var patientResponses = patientService.findAll()
+    public ResponseEntity<List<PatientResponse>> findAll(Pageable pageable) {
+        var patientResponses = patientService.findAll(pageable)
                 .stream()
                 .map(mapper::toPatientResponse)
                 .collect(Collectors.toList());
