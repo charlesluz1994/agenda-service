@@ -1,5 +1,6 @@
 package cluz.com.agenda.domain.service;
 
+import cluz.com.agenda.config.annotations.Log;
 import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.PatientRepository;
 import cluz.com.agenda.exception.BusinessException;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Service
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class PatientService {
     private final PatientRepository repository;
 
+    @Log
     public Patient save(Patient patient) {
 
         if (patient.getId() != null) {
@@ -30,6 +32,7 @@ public class PatientService {
         if (isCPFAlreadyRegistered(patient)) {
             throw new DataIntegrityViolationException("Cpf already exists in the database");
         }
+        patient.setDate(ZonedDateTime.now());
         return repository.save(patient);
     }
 
@@ -49,7 +52,7 @@ public class PatientService {
             throw new BusinessException("Patient not registered!");
         }
 
-        return repository.findById(id);
+        return optPatient;
     }
 
     public Patient updatePatient(Long id, Patient patient) {

@@ -3,5 +3,6 @@ create TABLE patient(
  name varchar(50),
  lastname varchar(100),
  cpf varchar(15),
- email varchar(100)
+ email varchar(100),
+ created_date timestamp
 );
