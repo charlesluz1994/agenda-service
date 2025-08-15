@@ -3,6 +3,7 @@ package cluz.com.agenda.domain.service;
 import cluz.com.agenda.domain.entity.Agenda;
 import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.AgendaRepository;
+import cluz.com.agenda.domain.repository.PatientRepository;
 import cluz.com.agenda.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,9 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class AgendaService {
-	private final AgendaRepository repository;
+	private final AgendaRepository agendaRepository;
 	private final PatientService patientService;
+	private final PatientRepository patientRepository;
 
 	public Agenda save(Agenda agenda) {
 		if (agenda.getPatient() == null) {
@@ -26,35 +28,40 @@ public class AgendaService {
 		}
 
 		Optional<Patient> optPatient = patientService.findById(agenda.getPatient().getId());
+		Optional<Agenda> optAgendaTime = agendaRepository.findByAppointmentTime(agenda.getAppointmentTime());
 
-		Optional<Agenda> optTime = repository.findByAppointmentTime(agenda.getAppointmentTime());
-
-		if (optTime.isPresent()) {
+		if (optAgendaTime.isPresent()) {
 			throw new BusinessException("Time already scheduled!");
 		}
 
 		agenda.setPatient(optPatient.get());
 		agenda.setCreatedDate(LocalDateTime.now());
 
-		return repository.save(agenda);
+		return agendaRepository.save(agenda);
 	}
 
 	public List<Agenda> findAll() {
-		return repository.findAll();
+		return agendaRepository.findAll();
+	}
+
+	public List<Agenda> findAllByPatientId(Long id) {
+		Optional<Patient> optionalPatient = patientRepository.findById(id);
+		return agendaRepository.findAllByPatient(
+				optionalPatient.orElseThrow(() -> new BusinessException("Patient not found")));
 	}
 
 	@Cacheable(value = "agendasId")
 	public Optional<Agenda> findById(Long id) {
-		return Optional.ofNullable(repository.findById(id)
+		return Optional.ofNullable(agendaRepository.findById(id)
 				.orElseThrow(() -> new BusinessException("Agenda not found")));
 	}
 
 	public void delete(Long id) {
-		var optAgenda = repository.findById(id);
+		var optAgenda = agendaRepository.findById(id);
 
 		if (optAgenda.isEmpty()) {
 			throw new BusinessException("Agenda not found!");
 		}
-		repository.deleteById(id);
+		agendaRepository.deleteById(id);
 	}
 }
