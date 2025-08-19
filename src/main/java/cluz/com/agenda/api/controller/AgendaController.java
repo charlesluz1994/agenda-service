@@ -5,6 +5,7 @@ import cluz.com.agenda.api.request.AgendaRequest;
 import cluz.com.agenda.api.response.AgendaResponse;
 import cluz.com.agenda.domain.entity.Agenda;
 import cluz.com.agenda.domain.service.AgendaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -50,8 +50,8 @@ public class AgendaController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<AgendaResponse> getAgendaById(@Valid @PathVariable Long id) {
-		var optAgenda = agendaService.findById(id);
-		return ResponseEntity.status(HttpStatus.OK).body(mapper.toAgendaResponse(optAgenda.get()));
+		var agenda = agendaService.findById(id);
+		return ResponseEntity.status(HttpStatus.OK).body(mapper.toAgendaResponse(agenda));
 	}
 
 	@DeleteMapping("/{id}")

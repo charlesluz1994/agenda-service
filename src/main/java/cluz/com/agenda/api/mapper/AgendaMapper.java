@@ -3,30 +3,37 @@ package cluz.com.agenda.api.mapper;
 import cluz.com.agenda.api.request.AgendaRequest;
 import cluz.com.agenda.api.response.AgendaResponse;
 import cluz.com.agenda.domain.entity.Agenda;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import cluz.com.agenda.domain.entity.Patient;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Component
-@RequiredArgsConstructor
-public class AgendaMapper {
 
-    private final ModelMapper mapper;
+@Mapper(componentModel = "spring")
+public interface AgendaMapper {
 
-    public Agenda toAgenda(AgendaRequest agendaRequest) {
-        return mapper.map(agendaRequest, Agenda.class);
-    }
+	AgendaMapper INSTANCE = Mappers.getMapper(AgendaMapper.class);
 
-    public AgendaResponse toAgendaResponse(Agenda agenda) {
-        return mapper.map(agenda, AgendaResponse.class);
-    }
+	@Mapping(target = "patientId", source = "patient.id")
+	@Mapping(target = "patientName", source = "patient.name")
+	@Mapping(target = "patientEmail", source = "patient.email")
+	AgendaResponse toAgendaResponse(Agenda agenda);
 
-    public List<AgendaResponse> toAgendaResponseList(List<Agenda> agendas) {
-        return agendas.stream()
-                .map(this::toAgendaResponse)
-                .collect(Collectors.toList());
-    }
+	List<AgendaResponse> toAgendaResponseList(List<Agenda> agendas);
+
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "createdDate", ignore = true)
+	@Mapping(target = "patient", source = "patientId")
+	Agenda toAgenda(AgendaRequest agendaRequest);
+
+	default Patient mapPatientId(Long patientId) {
+		if (patientId == null) {
+			return null;
+		}
+		Patient patient = new Patient();
+		patient.setId(patientId);
+		return patient;
+	}
 }

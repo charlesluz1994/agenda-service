@@ -4,6 +4,7 @@ import cluz.com.agenda.api.mapper.PatientMapper;
 import cluz.com.agenda.api.request.PatientRequest;
 import cluz.com.agenda.api.response.PatientResponse;
 import cluz.com.agenda.domain.service.PatientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,9 +57,9 @@ public class PatientController {
 	@GetMapping("/{id}")
 	public ResponseEntity<PatientResponse> getPatientById(@Valid @PathVariable Long id) {
 		log.info("Finding patient by id: {}", id);
-		var optPatient = patientService.findById(id);
+		var patient = patientService.findPatientById(id);
 
-		return ResponseEntity.status(HttpStatus.OK).body(mapper.toPatientResponse(optPatient.get()));
+		return ResponseEntity.status(HttpStatus.OK).body(mapper.toPatientResponse(patient));
 	}
 
 	@PutMapping("/{id}")

@@ -1,8 +1,9 @@
-create TABLE patient(
- id serial PRIMARY KEY,
- name varchar(50),
- lastname varchar(100),
- cpf varchar(15),
- email varchar(100),
- created_date timestamp
+create TABLE patient
+(
+    id           serial PRIMARY KEY,
+    name         varchar(50)  NOT NULL,
+    lastname     varchar(100) NOT NULL,
+    cpf          varchar(15)  NOT NULL,
+    email        varchar(100) NOT NULL,
+    created_date timestamp
 );

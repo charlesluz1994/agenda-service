@@ -12,8 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AgendaResponse {
-    private Long id;
-    private String description;
-    private LocalDateTime appointmentTime;
-    private PatientResponse patient;
+	private Long id;
+	private String description;
+	private LocalDateTime appointmentTime;
+	private LocalDateTime createdDate;
+	private Long patientId;
+
+	private String patientName;
+	private String patientEmail;
 }

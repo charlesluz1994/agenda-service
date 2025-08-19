@@ -13,26 +13,25 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorUtility {
 
-    public static Error buildInvalidArgumentError(String source) {
-        return getError(ErrorConstants.INVALID_ARGUMENT_ERROR_MESSAGE, source, ErrorConstants.INVALID_ARGUMENT_REASON_CODE, HttpStatus.BAD_REQUEST.value());
-    }
+	public static Error buildInvalidArgumentError(String source) {
+		return getError(ErrorConstants.INVALID_ARGUMENT_ERROR_MESSAGE, source, ErrorConstants.INVALID_ARGUMENT_REASON_CODE, HttpStatus.BAD_REQUEST.value());
+	}
 
-    public static Error buildInvalidArgumentCannotBeNullError(String source) {
-        return getError(ErrorConstants.INVALID_ARGUMENT_ERROR_MESSAGE, source, ErrorConstants.INVALID_ARGUMENT_REASON_CODE, HttpStatus.BAD_REQUEST.value());
-    }
+	public static Error buildInvalidArgumentCannotBeNullError(String source) {
+		return getError(ErrorConstants.INVALID_ARGUMENT_ERROR_MESSAGE, source, ErrorConstants.INVALID_ARGUMENT_REASON_CODE, HttpStatus.BAD_REQUEST.value());
+	}
 
-    public static Error buildInvalidArgumentInvalidValueError() {
+	public static Error buildInvalidArgumentInvalidValueError() {
+		return getError(ErrorConstants.INVALID_ARGUMENT_ERROR_MESSAGE, ErrorConstants.REQUEST_BODY_SOURCE, ErrorConstants.INVALID_ARGUMENT_REASON_CODE, HttpStatus.BAD_REQUEST.value());
+	}
 
-        return getError(ErrorConstants.INVALID_ARGUMENT_ERROR_MESSAGE, ErrorConstants.REQUEST_BODY_SOURCE, ErrorConstants.INVALID_ARGUMENT_REASON_CODE, HttpStatus.BAD_REQUEST.value());
-    }
-
-    public static Error getError(String message, String source, String reason, Integer status) {
-        return Error.builder()
-                .message(message)
-                .source(source)
-                .reason(reason)
-                .status(status)
-                .build();
-    }
+	public static Error getError(String message, String source, String reason, Integer status) {
+		return Error.builder()
+				.message(message)
+				.source(source)
+				.reason(reason)
+				.status(status)
+				.build();
+	}
 
 }

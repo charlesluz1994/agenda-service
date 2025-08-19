@@ -5,14 +5,15 @@ import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.AgendaRepository;
 import cluz.com.agenda.domain.repository.PatientRepository;
 import cluz.com.agenda.exception.BusinessException;
+import cluz.com.agenda.exception.NotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import springfox.documentation.annotations.Cacheable;
 
-import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,45 +24,89 @@ public class AgendaService {
 	private final PatientRepository patientRepository;
 
 	public Agenda save(Agenda agenda) {
-		if (agenda.getPatient() == null) {
-			throw new BusinessException("Patient not found!");
+		if (agenda.getPatient().getId() == null) {
+			throw new NotFoundException("This patient is not registered.!");
 		}
 
-		Optional<Patient> optPatient = patientService.findById(agenda.getPatient().getId());
-		Optional<Agenda> optAgendaTime = agendaRepository.findByAppointmentTime(agenda.getAppointmentTime());
+		var patient = patientService.findPatientById(agenda.getPatient().getId());
 
-		if (optAgendaTime.isPresent()) {
-			throw new BusinessException("Time already scheduled!");
-		}
+		checkAvailability(patient, agenda);
 
-		agenda.setPatient(optPatient.get());
+		agenda.setPatient(patient);
 		agenda.setCreatedDate(LocalDateTime.now());
 
-		return agendaRepository.save(agenda);
+		var savedAgenda = agendaRepository.save(agenda);
+
+		patient.getAgendas().add(savedAgenda);
+
+		return savedAgenda;
 	}
+
+	/**
+	 * Validate if there is conflict of appointments time before save.
+	 *
+	 * @param patient
+	 * @param newAgenda
+	 */
+	private void checkAvailability(Patient patient, Agenda newAgenda) {
+		var patientAgendas = agendaRepository.findByPatientId(patient.getId());
+
+		for (Agenda existingAgenda : patientAgendas) {
+			if (isTimeConflict(existingAgenda, newAgenda)) {
+				throw new BusinessException("Time already scheduled!");
+			}
+		}
+	}
+
+	/**
+	 * Verify if the new agenda is 30 min before or 30 min after the existing agenda.Override of agenda is not possible.
+	 *
+	 * @param existingAgenda
+	 * @param newAgenda
+	 * @return
+	 */
+	private boolean isTimeConflict(Agenda existingAgenda, Agenda newAgenda) {
+		LocalDateTime existingStart = existingAgenda.getAppointmentTime();
+		LocalDateTime existingEnd = existingStart.plusMinutes(30);
+
+		LocalDateTime newStart = newAgenda.getAppointmentTime();
+		LocalDateTime newEnd = newStart.plusMinutes(30);
+
+		return !(newEnd.isBefore(existingStart) || newStart.isAfter(existingEnd));
+		//return newEnd.isBefore(existingStart.minusMinutes(30)) && newStart.isAfter(existingEnd.plusMinutes(30));
+	}
+
 
 	public List<Agenda> findAll() {
 		return agendaRepository.findAll();
 	}
 
 	public List<Agenda> findAllByPatientId(Long id) {
-		Optional<Patient> optionalPatient = patientRepository.findById(id);
-		return agendaRepository.findAllByPatient(
-				optionalPatient.orElseThrow(() -> new BusinessException("Patient not found")));
+		var patient = patientRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Patient not found"));
+		return agendaRepository.findByPatientId(patient.getId());
 	}
 
 	@Cacheable(value = "agendasId")
-	public Optional<Agenda> findById(Long id) {
-		return Optional.ofNullable(agendaRepository.findById(id)
-				.orElseThrow(() -> new BusinessException("Agenda not found")));
+	public Agenda findById(Long id) {
+		return agendaRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Agenda not found"));
 	}
 
 	public void delete(Long id) {
-		var optAgenda = agendaRepository.findById(id);
+		var agenda = findById(id);
 
-		if (optAgenda.isEmpty()) {
-			throw new BusinessException("Agenda not found!");
+		// Remove from patient's agenda list to maintain bidirectional relationship
+		var patient = agenda.getPatient();
+		if (patient != null) {
+			patient.getAgendas().remove(agenda);
 		}
-		agendaRepository.deleteById(id);
+
+		agendaRepository.deleteById(agenda.getId());
+	}
+
+	public List<Agenda> getTodayAgendas(Long patientId) {
+		LocalDate today = LocalDate.now();
+		return agendaRepository.findTodayAgendasByPatientId(patientId, today, today);
 	}
 }
