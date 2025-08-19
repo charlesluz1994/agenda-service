@@ -3,69 +3,68 @@ package cluz.com.agenda.domain.service;
 import cluz.com.agenda.config.annotations.Log;
 import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.PatientRepository;
-import cluz.com.agenda.exception.BusinessException;
 import cluz.com.agenda.exception.DataIntegrityViolationException;
+import cluz.com.agenda.exception.NotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 @Service
 @Transactional
 @Slf4j
 @RequiredArgsConstructor
 public class PatientService {
-    private final PatientRepository repository;
+	private final PatientRepository repository;
 
-    @Log
-    public Patient save(Patient patient) {
+	@Log
+	public Patient save(Patient patient) {
+		if (isCPFAlreadyRegistered(patient.getCpf())) {
+			throw new DataIntegrityViolationException("Cpf is already registered.");
+		}
+		patient.setCreatedDate(ZonedDateTime.now());
+		return repository.save(patient);
+	}
 
-        if (patient.getId() != null) {
-            throw new IllegalArgumentException("ID must be null for new entities.");
-        }
+	public Page<Patient> findAll(Pageable pageable) {
+		return repository.findAll(pageable);
+	}
 
-        if (isCPFAlreadyRegistered(patient)) {
-            throw new DataIntegrityViolationException("Cpf already exists in the database");
-        }
-        patient.setDate(ZonedDateTime.now());
-        return repository.save(patient);
-    }
+	public void delete(Long id) {
+		var patient = findPatientById(id);
+		log.info("Deleting patient by id: {}", id);
 
-    public Page<Patient> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
-    }
+		repository.deleteById(patient.getId());
 
-    public void delete(Long id) {
-        repository.deleteById(id);
-        log.info("Performing search of patient by id: {}", id);
-    }
+	}
 
-    public Optional<Patient> findById(Long id) {
-        var optPatient = repository.findById(id);
+	public Patient findPatientById(Long id) {
+		return repository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Patient not registered!"));
+	}
 
-        if (optPatient.isEmpty()) {
-            throw new BusinessException("Patient not registered!");
-        }
+	public Patient updatePatient(Long id, Patient patient) {
+		var existentPatient = findPatientById(id);
 
-        return optPatient;
-    }
+		if (!existentPatient.getCpf().equals(patient.getCpf()) && isCPFAlreadyRegistered(patient.getCpf())) {
+			throw new DataIntegrityViolationException("Cpf is already registered.");
+		}
 
-    public Patient updatePatient(Long id, Patient patient) {
-        var optPatient = this.findById(id);
-        if (optPatient.isEmpty()) {
-            throw new BusinessException("Patient not registered!");
-        }
-        patient.setId(id);
-        return save(patient);
-    }
+		log.info("Updating patient with id: {}", id);
 
-    private boolean isCPFAlreadyRegistered(Patient objPatient) {
-        var optionalPatient = repository.findByCpf(objPatient.getCpf());
-        return optionalPatient.isPresent();
-    }
+		existentPatient.setName(patient.getName());
+		existentPatient.setLastname(patient.getLastname());
+		existentPatient.setCpf(patient.getCpf());
+		existentPatient.setEmail(patient.getEmail());
+		return repository.save(existentPatient);
+	}
+
+	private boolean isCPFAlreadyRegistered(String cpfPatient) {
+		var optionalPatient = repository.findByCpf(cpfPatient);
+		return optionalPatient.isPresent();
+	}
 }

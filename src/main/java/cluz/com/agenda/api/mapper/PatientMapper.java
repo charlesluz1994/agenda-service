@@ -3,30 +3,19 @@ package cluz.com.agenda.api.mapper;
 import cluz.com.agenda.api.request.PatientRequest;
 import cluz.com.agenda.api.response.PatientResponse;
 import cluz.com.agenda.domain.entity.Patient;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-import java.util.List;
-import java.util.stream.Collectors;
+@Mapper(componentModel = "spring")
+public interface PatientMapper {
 
-@Component
-@RequiredArgsConstructor
-public class PatientMapper {
+	PatientMapper INSTANCE = Mappers.getMapper(PatientMapper.class);
 
-    private final ModelMapper mapper;
+	PatientResponse toPatientResponse(Patient patient);
 
-    public Patient toPatient(PatientRequest patientRequest) {
-        return mapper.map(patientRequest, Patient.class);
-    }
-
-    public PatientResponse toPatientResponse(Patient patient) {
-        return mapper.map(patient, PatientResponse.class);
-    }
-
-    public List<PatientResponse> toPatientResponseList(List<Patient> patients) {
-        return patients.stream()
-                .map(this::toPatientResponse)
-                .collect(Collectors.toList());
-    }
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "createdDate", ignore = true)
+	@Mapping(target = "agendas", ignore = true)
+	Patient toPatient(PatientRequest patientRequest);
 }

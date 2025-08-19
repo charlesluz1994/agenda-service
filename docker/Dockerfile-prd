@@ -1,0 +1,60 @@
+FROM eclipse-temurin:17-jdk-alpine
+
+LABEL maintainer="charlesluz.94@gmail.com"
+LABEL version="1.2.0"
+LABEL description="Agenda Service API"
+
+# Install security updates and necessary packages
+RUN apk --no-cache add curl dumb-init tzdata && \
+    rm -rf /var/cache/apk/*
+
+ENV TZ=America/Sao_Paulo
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appuser && \
+    adduser -u 1001 -S appuser -G appuser
+
+WORKDIR /app
+
+COPY target/agenda-1.2.0-SNAPSHOT.jar app.jar
+
+##ARG JAR_FILE=target/*.jar
+  #COPY ${JAR_FILE} app.jar
+
+# Change ownership to appuser
+RUN chown appuser:appuser /app/app.jar
+
+# Switch to non-root user
+USER appuser
+
+EXPOSE 8087
+
+# JVM arguments optimized for containers and Java 11
+# Memory recommendations for different environments:
+# Development/Small: 512MB (MaxRAM=400MB)  -> -Xmx400m
+# Production/Medium: 1GB (MaxRAM=800MB)   -> -Xmx800m
+# Production/Large: 2GB (MaxRAM=1600MB)   -> -Xmx1600m
+ENV JAVA_MAX_MEM=800m
+ENV JAVA_OPTS="-server \
+               -Xmx${JAVA_MAX_MEM} \
+               -XX:+UseContainerSupport \
+               -XX:+UseG1GC \
+               -XX:MaxGCPauseMillis=200 \
+               -XX:+UseStringDeduplication \
+               -XX:+OptimizeStringConcat \
+               -XX:+UseCompressedOops \
+               -Djava.awt.headless=true \
+               -Djava.security.egd=file:/dev/./urandom \
+               -Dspring.profiles.active=prd \
+               -Dspring.backgroundpreinitializer.ignore=true \
+               -Dserver.port=8087"
+
+# Health check on correct port and endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+    CMD curl -f http://localhost:8087/actuator/health || exit 1
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start command
+CMD ["sh", "-c", "exec java $JAVA_OPTS -jar app.jar"]
