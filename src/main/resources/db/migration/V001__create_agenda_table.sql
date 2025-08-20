@@ -1,4 +1,6 @@
-create TABLE patient
+CREATE SCHEMA IF NOT EXISTS agenda_schema;
+
+CREATE TABLE IF NOT EXISTS agenda_schema.patient
 (
     id           serial PRIMARY KEY,
     name         varchar(50)  NOT NULL,
