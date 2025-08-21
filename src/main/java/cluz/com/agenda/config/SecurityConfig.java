@@ -37,7 +37,9 @@ public class SecurityConfig {
 			"/swagger-ui/**",
 			// Other public endpoints
 			"/login",
-			"/actuator/health"
+			"/actuator/health",
+			"/actuator/health/readiness",
+			"/actuator/health/liveness"
 	};
 
 	// Configure provider for authentication with  UserDetailsService + BCrypt

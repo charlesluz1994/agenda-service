@@ -1,19 +1,26 @@
-# Build stage
-FROM maven:3.8.3-openjdk-17 AS builder
-WORKDIR /app
-COPY pom.xml .
-COPY src src
-RUN mvn clean package -DskipTests
-
-# Runtime
 FROM eclipse-temurin:17-jre
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-RUN groupadd -g 1001 appuser && useradd -u 1001 -g appuser -m appuser
 WORKDIR /app
-COPY --from=builder --chown=appuser:appuser /app/target/agenda-*.jar app.jar
-USER appuser
+COPY target/agenda-*.jar app.jar
 EXPOSE 8087
-ENV JAVA_OPTS="-Xmx1400m -XX:+UseG1GC"
-HEALTHCHECK --interval=30s CMD curl -f http://localhost:8087/actuator/health
-#ENTRYPOINT ["dumb-init", "--"]
+
+ENV JAVA_MAX_MEM=800m
+ENV JAVA_OPTS="-server \
+               -Xmx${JAVA_MAX_MEM} \
+               -XX:+UseContainerSupport \
+               -XX:+UseG1GC \
+               -XX:MaxGCPauseMillis=200 \
+               -XX:+UseStringDeduplication \
+               -XX:+OptimizeStringConcat \
+               -XX:+UseCompressedOops \
+               -Djava.security.egd=file:/dev/./urandom \
+               -Dspring.backgroundpreinitializer.ignore=true"
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s CMD curl -f http://localhost:8087/actuator/health || exit 1
+
 ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar app.jar"]
+
+# JVM arguments optimized for containers and Java 11
+# Memory recommendations for different environments:
+# Development/Small: 512MB (MaxRAM=400MB)  -> -Xmx400m
+# Production/Medium: 1GB (MaxRAM=800MB)   -> -Xmx800m
+# Production/Large: 2GB (MaxRAM=1600MB)   -> -Xmx1600m
