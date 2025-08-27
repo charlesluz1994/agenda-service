@@ -93,7 +93,7 @@ jobs:
           
           # Verificar a mudança
           echo "Deployment atualizado:"
-          grep -n "image:" deployment.yaml
+          grep -n "image:" deployment.yml
 
       # Deploy para o Kubernetes
       - name: Deploy to AKS
