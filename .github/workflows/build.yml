@@ -85,11 +85,11 @@ jobs:
         run: |
           kubectl get namespace ${{ env.AKS_AGENDA_NAMESPACE }} || kubectl create namespace ${{ env.AKS_AGENDA_NAMESPACE }}
 
-      # Atualizar a tag da imagem no deployment.yaml
+      # Atualizar a tag da imagem no deployment.yml
       - name: Update image tag in deployment
         run: |
-          # Atualizar a imagem no arquivo deployment.yaml
-          sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}|g" deployment.yaml
+          # Atualizar a imagem no arquivo deployment.yml
+          sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}|g" deployment.yml
           
           # Verificar a mudança
           echo "Deployment atualizado:"
