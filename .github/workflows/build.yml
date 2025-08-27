@@ -89,8 +89,9 @@ jobs:
       # Atualizar a tag da imagem no deployment.yml
       - name: Update image tag in deployment
         run: |
-          # Atualizar a imagem no arquivo deployment.yml
-          sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:latest|g" deployment.yml
+          kubectl set image deployment/agenda-service agenda-api=${DOCKER_IMAGE_NAME}:latest -n $AKS_AGENDA_NAMESPACE
+          # kubectl set image deployment/agenda-service agenda-api=***/agenda-service:<TAG> -n $AKS_AGENDA_NAMESPACE
+          # sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:latest|g" deployment.yml
           # sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}|g" deployment.yml
           
           # Verificar a mudança
