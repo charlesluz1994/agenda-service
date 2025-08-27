@@ -45,13 +45,11 @@ jobs:
 
       # Build e Push da imagem Docker
       - name: Build and push Docker image
-        # uses: docker/build-push-action@v4
-        # with:
-        run: |
-          docker build -t ${{ env.DOCKER_IMAGE_NAME }}:latest .
-          docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
-          docker push ${{ env.DOCKER_IMAGE_NAME }}:latest
-          docker push ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
