@@ -98,7 +98,7 @@ jobs:
       # Deploy para o Kubernetes
       - name: Deploy to AKS
         run: |
-          kubectl apply -f deployment.yaml -n ${{ env.AKS_AGENDA_NAMESPACE }}
+          kubectl apply -f deployment.yml -n ${{ env.AKS_AGENDA_NAMESPACE }}
 
       # Aguardar o rollout
       - name: Wait for rollout
