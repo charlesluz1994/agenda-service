@@ -15,5 +15,4 @@ USER appuser
 EXPOSE 8087
 ENV JAVA_OPTS="-Xmx1400m -XX:+UseG1GC"
 HEALTHCHECK --interval=30s CMD curl -f http://localhost:8087/actuator/health
-#ENTRYPOINT ["dumb-init", "--"]
 ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar app.jar"]

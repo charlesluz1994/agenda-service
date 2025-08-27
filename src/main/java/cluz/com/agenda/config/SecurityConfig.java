@@ -39,7 +39,9 @@ public class SecurityConfig {
 			"/login",
 			"/actuator/health",
 			"/actuator/health/readiness",
-			"/actuator/health/liveness"
+			"/actuator/health/liveness",
+			"/actuator/prometheus",
+			"/actuator/metrics"
 	};
 
 	// Configure provider for authentication with  UserDetailsService + BCrypt
