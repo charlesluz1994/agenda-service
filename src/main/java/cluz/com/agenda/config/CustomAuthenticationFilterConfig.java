@@ -29,13 +29,13 @@ public class CustomAuthenticationFilterConfig extends UsernamePasswordAuthentica
 
 	private final AuthenticationManager authenticationManager;
 
+	private final String jwtSecret;
+
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
 		String user = request.getParameter(SPRING_SECURITY_FORM_USERNAME_KEY);
 		String password = request.getParameter(SPRING_SECURITY_FORM_PASSWORD_KEY);
-
-		log.info("user: {}, e password: {}", user, password);
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, password);
 
@@ -45,7 +45,7 @@ public class CustomAuthenticationFilterConfig extends UsernamePasswordAuthentica
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
-		Algorithm algorithm = Algorithm.HMAC256("my-secret");
+		Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
 		User user = (User) authResult.getPrincipal();
 
 		String accessToken = JWT.create()
