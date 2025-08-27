@@ -93,10 +93,6 @@ jobs:
           # kubectl set image deployment/agenda-service agenda-api=***/agenda-service:<TAG> -n $AKS_AGENDA_NAMESPACE
           # sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:latest|g" deployment.yml
           # sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}|g" deployment.yml
-          
-          # Verificar a mudança
-          echo "Deployment atualizado:"
-          grep -n "image:" deployment.yml
 
       # Deploy para o Kubernetes
       - name: Deploy to AKS
