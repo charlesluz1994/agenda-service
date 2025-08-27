@@ -50,6 +50,7 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
+          # ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -89,7 +90,8 @@ jobs:
       - name: Update image tag in deployment
         run: |
           # Atualizar a imagem no arquivo deployment.yml
-          sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}|g" deployment.yml
+          sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:latest|g" deployment.yml
+          # sed -i "s|image: ${{ env.DOCKER_IMAGE_NAME }}:.*|image: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}|g" deployment.yml
           
           # Verificar a mudança
           echo "Deployment atualizado:"
