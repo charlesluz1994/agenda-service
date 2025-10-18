@@ -8,6 +8,7 @@ import cluz.com.agenda.exception.BusinessException;
 import cluz.com.agenda.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AgendaService {
 	private final AgendaRepository agendaRepository;
 	private final PatientService patientService;
@@ -38,7 +40,7 @@ public class AgendaService {
 		var savedAgenda = agendaRepository.save(agenda);
 
 		patient.getAgendas().add(savedAgenda);
-
+		log.info("Saving new agenda with id: {} to the patient: {}", agenda.getId(), agenda.getPatient().getId());
 		return savedAgenda;
 	}
 
@@ -96,11 +98,14 @@ public class AgendaService {
 	public void delete(Long id) {
 		var agenda = findById(id);
 
-		// Remove from patient's agenda list to maintain bidirectional relationship
+		/**
+		 * Remove from patient's agenda list to maintain bidirectional relationship
+		 */
 		var patient = agenda.getPatient();
 		if (patient != null) {
 			patient.getAgendas().remove(agenda);
 		}
+		log.info("deleting agenda with id: {} from the patient: {}", agenda.getId(), patient.getId());
 
 		agendaRepository.deleteById(agenda.getId());
 	}

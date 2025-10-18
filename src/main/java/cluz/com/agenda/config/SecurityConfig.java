@@ -1,8 +1,11 @@
 package cluz.com.agenda.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,28 +26,37 @@ public class SecurityConfig {
 	private final UserDetailsService userDetailsService;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	private static final String[] AUTH_WHITELIST = {
-			// Swagger UI v2
-			"/v2/api-docs",
-			"/swagger-resources",
-			"/swagger-resources/**",
-			"/configuration/ui",
-			"/configuration/security",
-			"/swagger-ui.html",
-			"/webjars/**",
-			// Swagger UI v3 (OpenAPI)
-			"/v3/api-docs/**",
-			"/swagger-ui/**",
-			// Other public endpoints
+	@Value("${jwt.secret.key}")
+	private String jwtSecret;
+
+	private static final String[] AUTH_WHITELIST_DEV = {
 			"/login",
 			"/actuator/health",
 			"/actuator/health/readiness",
 			"/actuator/health/liveness",
 			"/actuator/prometheus",
-			"/actuator/metrics"
+			"/actuator/metrics",
+			"/v2/api-docs",
+			"/swagger-resources/**",
+			"/webjars/**",
+			"/v3/api-docs/**",
+			"/swagger-ui/**"
 	};
 
-	// Configure provider for authentication with  UserDetailsService + BCrypt
+	private static final String[] AUTH_WHITELIST_PRD = {
+			"/login",
+			"/actuator/health/readiness",
+			"/actuator/health/liveness",
+			"/v2/api-docs",
+			"/swagger-resources/**",
+			"/webjars/**",
+			"/v3/api-docs/**",
+			"/swagger-ui/**"
+	};
+
+	/**
+	 * Provider configuration for authentication with  UserDetailsService + BCrypt
+	 */
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -60,22 +72,29 @@ public class SecurityConfig {
 
 	// Set filters of login and JWT authorization
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authManager, Environment env) throws Exception {
 
-		CustomAuthenticationFilterConfig customAuthFilter = new CustomAuthenticationFilterConfig(authManager);
-		customAuthFilter.setFilterProcessesUrl("/login");
+		String[] whitelist = env.acceptsProfiles(Profiles.of("prd"))
+				? AUTH_WHITELIST_PRD
+				: AUTH_WHITELIST_DEV;
 
 		http
 				.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authz -> authz
-						.requestMatchers(AUTH_WHITELIST).permitAll()
+						.requestMatchers(whitelist).permitAll()
 						.anyRequest().authenticated()
 				)
 				.authenticationProvider(authenticationProvider())
-				.addFilter(customAuthFilter)
+				.addFilter(getCustomAuthenticationFilterConfig(authManager))
 				.addFilterBefore(new CustomAuthorizationFilterConfig(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
+	}
+
+	private CustomAuthenticationFilterConfig getCustomAuthenticationFilterConfig(AuthenticationManager authManager) {
+		CustomAuthenticationFilterConfig customAuthFilter = new CustomAuthenticationFilterConfig(authManager, jwtSecret);
+		customAuthFilter.setFilterProcessesUrl("/login");
+		return customAuthFilter;
 	}
 }

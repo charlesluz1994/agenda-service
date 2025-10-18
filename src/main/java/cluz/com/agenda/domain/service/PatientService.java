@@ -26,6 +26,7 @@ public class PatientService {
 		if (isCPFAlreadyRegistered(patient.getCpf())) {
 			throw new DataIntegrityViolationException("Cpf is already registered.");
 		}
+		log.info("Saving new patient with id: {}", patient.getId());
 		patient.setCreatedDate(ZonedDateTime.now());
 		return repository.save(patient);
 	}
