@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,22 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Slf4j
+@RequiredArgsConstructor
 public class CustomAuthorizationFilterConfig extends OncePerRequestFilter {
+
+	private static final String BEARER_PREFIX = "Bearer ";
+
+	private final String jwtSecret;
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String authorizationHeader = request.getHeader("Authorization");
 
-		if (Strings.isNotEmpty(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
+		if (Strings.isNotEmpty(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX)) {
 
 			try {
-				String token = authorizationHeader.substring("Bearer ".length());
-				Algorithm algorithm = Algorithm.HMAC256("my-secret");
+				String token = authorizationHeader.substring(BEARER_PREFIX.length());
+				Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
 
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(token);

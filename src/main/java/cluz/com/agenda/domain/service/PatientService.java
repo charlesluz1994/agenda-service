@@ -5,14 +5,12 @@ import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.PatientRepository;
 import cluz.com.agenda.exception.DataIntegrityViolationException;
 import cluz.com.agenda.exception.NotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -26,11 +24,11 @@ public class PatientService {
 		if (isCPFAlreadyRegistered(patient.getCpf())) {
 			throw new DataIntegrityViolationException("Cpf is already registered.");
 		}
-		log.info("Saving new patient with id: {}", patient.getId());
-		patient.setCreatedDate(ZonedDateTime.now());
+		log.info("Saving new patient");
 		return repository.save(patient);
 	}
 
+	@Transactional(readOnly = true)
 	public Page<Patient> findAll(Pageable pageable) {
 		return repository.findAll(pageable);
 	}
@@ -43,6 +41,7 @@ public class PatientService {
 
 	}
 
+	@Transactional(readOnly = true)
 	public Patient findPatientById(Long id) {
 		return repository.findById(id)
 				.orElseThrow(() -> new NotFoundException("Patient not registered!"));

@@ -5,12 +5,9 @@ import cluz.com.agenda.api.response.PatientResponse;
 import cluz.com.agenda.domain.entity.Patient;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface PatientMapper {
-
-	PatientMapper INSTANCE = Mappers.getMapper(PatientMapper.class);
 
 	PatientResponse toPatientResponse(Patient patient);
 

@@ -14,13 +14,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,7 +74,7 @@ class AgendaServiceTest {
 			agendaService.save(invalidAgenda);
 		});
 
-		assertEquals("This patient is not registered.!", exception.getMessage(), "Exception message should match");
+		assertEquals("This patient is not registered.", exception.getMessage(), "Exception message should match");
 	}
 
 	@Test
@@ -97,6 +100,59 @@ class AgendaServiceTest {
 
 		verify(patientService).findPatientById(expectedAgenda.getPatient().getId());
 		verify(repository).findByPatientId(expectedAgenda.getPatient().getId());
+	}
+
+	@Test
+	@DisplayName("Given back-to-back appointments when saving then no conflict and save succeeds")
+	void givenConsecutiveAppointments_whenSave_thenSavedSuccessfully() {
+		// Given: an existing 30-min appointment immediately followed by the new one
+		Patient patient = buildPatient();
+		LocalDateTime existingStart = LocalDateTime.now().plusDays(1).withNano(0);
+
+		Agenda existing = Agenda.builder()
+				.id(2L)
+				.patient(patient)
+				.description("Existing Appointment")
+				.appointmentTime(existingStart)
+				.createdDate(LocalDateTime.now())
+				.build();
+
+		Agenda candidate = Agenda.builder()
+				.id(3L)
+				.patient(patient)
+				.description("Back-to-back Appointment")
+				.appointmentTime(existingStart.plusMinutes(30))
+				.createdDate(LocalDateTime.now())
+				.build();
+
+		when(patientService.findPatientById(patient.getId())).thenReturn(patient);
+		when(repository.findByPatientId(patient.getId())).thenReturn(List.of(existing));
+		when(repository.save(candidate)).thenReturn(candidate);
+
+		// When
+		Agenda saved = agendaService.save(candidate);
+
+		// Then
+		assertNotNull(saved, "consecutive appointment should be saved");
+		verify(repository).save(candidate);
+	}
+
+	@Test
+	@DisplayName("Given a patient id when getting today's agendas then query spans the whole day")
+	void givenPatientId_whenGetTodayAgendas_thenQueriesFullDayRange() {
+		// Given
+		ArgumentCaptor<LocalDateTime> startCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
+		ArgumentCaptor<LocalDateTime> endCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
+		when(repository.findTodayAgendasByPatientId(eq(1L), startCaptor.capture(), endCaptor.capture()))
+				.thenReturn(List.of());
+
+		// When
+		agendaService.getTodayAgendas(1L);
+
+		// Then
+		LocalDate today = LocalDate.now();
+		assertEquals(today.atStartOfDay(), startCaptor.getValue(), "start bound should be start of today");
+		assertEquals(today.atTime(LocalTime.MAX), endCaptor.getValue(), "end bound should be end of today");
 	}
 
 

@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
 	private final UserDetailsService userDetailsService;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final PasswordEncoder passwordEncoder;
 
 	@Value("${jwt.secret.key}")
 	private String jwtSecret;
@@ -61,7 +61,7 @@ public class SecurityConfig {
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(userDetailsService);
-		authProvider.setPasswordEncoder(bCryptPasswordEncoder);
+		authProvider.setPasswordEncoder(passwordEncoder);
 		return authProvider;
 	}
 
@@ -87,7 +87,7 @@ public class SecurityConfig {
 				)
 				.authenticationProvider(authenticationProvider())
 				.addFilter(getCustomAuthenticationFilterConfig(authManager))
-				.addFilterBefore(new CustomAuthorizationFilterConfig(), UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(new CustomAuthorizationFilterConfig(jwtSecret), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

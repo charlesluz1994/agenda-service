@@ -13,9 +13,10 @@ public class AspectLog {
 
     @Around("@annotation(cluz.com.agenda.config.annotations.Log)")
     public Object automaticLog(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        log.info("Starting save new patient - " + proceedingJoinPoint.getSignature());
+        var signature = proceedingJoinPoint.getSignature();
+        log.info("Starting {}", signature);
         Object result = proceedingJoinPoint.proceed();
-        log.info("Patient saved process finalized - " + proceedingJoinPoint.getSignature());
+        log.info("Finished {}", signature);
         return result;
     }
 }

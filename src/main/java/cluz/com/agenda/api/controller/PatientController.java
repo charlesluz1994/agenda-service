@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @RestController
@@ -35,13 +32,8 @@ public class PatientController {
 
 	@PostMapping
 	public ResponseEntity<PatientResponse> save(@Valid @RequestBody PatientRequest patientRequest) {
-		Optional<PatientResponse> optPatient = Stream.of(patientRequest)
-				.map(mapper::toPatient)
-				.map(patientService::save)
-				.map(mapper::toPatientResponse)
-				.findFirst();
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(optPatient.get());
+		var savedPatient = patientService.save(mapper.toPatient(patientRequest));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toPatientResponse(savedPatient));
 	}
 
 	@GetMapping
@@ -49,7 +41,7 @@ public class PatientController {
 		var patientResponses = patientService.findAll(pageable)
 				.stream()
 				.map(mapper::toPatientResponse)
-				.collect(Collectors.toList());
+				.toList();
 
 		return ResponseEntity.status(HttpStatus.OK).body(patientResponses);
 	}
@@ -65,13 +57,8 @@ public class PatientController {
 	@PutMapping("/{id}")
 	public ResponseEntity<PatientResponse> updatePatientById(@Valid @PathVariable Long id, @RequestBody PatientRequest patientRequest) {
 		log.info("Updating patient by id: {}", id);
-		var patientResponse = Stream.of(patientRequest)
-				.map(mapper::toPatient)
-				.map(patient -> patientService.updatePatient(id, patient))
-				.map(mapper::toPatientResponse)
-				.findFirst();
-
-		return ResponseEntity.status(HttpStatus.OK).body(patientResponse.get());
+		var updatedPatient = patientService.updatePatient(id, mapper.toPatient(patientRequest));
+		return ResponseEntity.status(HttpStatus.OK).body(mapper.toPatientResponse(updatedPatient));
 	}
 
 	@DeleteMapping("/{id}")

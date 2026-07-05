@@ -2,13 +2,13 @@ package cluz.com.agenda.domain.service;
 
 import cluz.com.agenda.domain.entity.User;
 import cluz.com.agenda.domain.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ public class UserService implements UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
+	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String user) throws UsernameNotFoundException {
 		Optional<User> optUser = repository.findByUser(user);
 

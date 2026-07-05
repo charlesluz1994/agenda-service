@@ -88,7 +88,7 @@ public class Error implements Serializable {
 		return reason;
 	}
 
-	public void setSReason(String reason) {
+	public void setReason(String reason) {
 		this.reason = reason;
 	}
 

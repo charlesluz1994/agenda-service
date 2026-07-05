@@ -3,6 +3,7 @@ package cluz.com.agenda.api.controller;
 import cluz.com.agenda.api.request.PatientRequest;
 import cluz.com.agenda.domain.entity.Patient;
 import cluz.com.agenda.domain.repository.PatientRepository;
+import cluz.com.agenda.exception.DataIntegrityViolationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +44,7 @@ class PatientControllerIntegrationTest {
 		var patient = Patient.builder()
 				.name("Charles")
 				.lastname("Luz")
-				.cpf("00100200388")
+				.cpf("93922590853")
 				.email("charles@gmail.com")
 				.build();
 
@@ -61,7 +62,7 @@ class PatientControllerIntegrationTest {
 		PatientRequest patient = PatientRequest.builder()
 				.name("Carlos")
 				.lastname("Luz")
-				.cpf("93922590853")
+				.cpf("52998224725")
 				.email("charles@gmail.com").build();
 
 		mockMvc.perform(post("/patient")
@@ -116,8 +117,8 @@ class PatientControllerIntegrationTest {
 	}
 
 	@Test
-	@DisplayName("Given a patient when save with patient already existence then throw an exception")
-	void given_Patient_when_SavePatientWithExistingCPF_then_ThrowAnException() throws Exception {
+	@DisplayName("Given a malformed CPF when saving a patient then return 400 from bean validation")
+	void given_Patient_when_SaveWithInvalidCPFFormat_then_Return400() throws Exception {
 		PatientRequest patient = PatientRequest.builder()
 				.name("Charles")
 				.lastname("Luz")
@@ -130,6 +131,24 @@ class PatientControllerIntegrationTest {
 						.content(objectMapper.writeValueAsString(patient)))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
 				.andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("Given a CPF already registered when saving a patient then return 400 from the duplicate rule")
+	void given_Patient_when_SaveWithExistingCPF_then_Return400() throws Exception {
+		PatientRequest patient = PatientRequest.builder()
+				.name("Another")
+				.lastname("Patient")
+				.cpf("93922590853")
+				.email("another@gmail.com").build();
+
+		mockMvc.perform(post("/patient")
+						.contentType(MediaType.APPLICATION_JSON)
+						.characterEncoding(StandardCharsets.UTF_8)
+						.content(objectMapper.writeValueAsString(patient)))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest())
+				.andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof DataIntegrityViolationException))
 				.andDo(print());
 	}
 }
