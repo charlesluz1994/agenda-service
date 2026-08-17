@@ -60,7 +60,8 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''./mvnw -B -ntp -Dmaven.repo.local=$MAVEN_LOCAL_REPO sonar:sonar \
+                    sh '''./mvnw -B -ntp -Dmaven.repo.local=$MAVEN_LOCAL_REPO \
+                          org.sonarsource.scanner.maven:sonar-maven-plugin:5.7.0.6970:sonar \
                           -Dsonar.projectKey=agenda-service \
                           -Dsonar.projectName=agenda-service \
                           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'''
